@@ -28,13 +28,22 @@ def faceDetect():
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.3, 2, 0, (30, 30))
-        upper = upper_cascade.detectMultiScale(gray, 1.3, 2, 0, (30,30))
+        uppers = upper_cascade.detectMultiScale(gray, 1.3, 2, 0, (30,30))
 
-        for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 3, 4, 0)
-            cv2.putText(frame, 'Detected Face', (x - 5, y - 5), font, 0.9, (255, 255, 0), 2)
-            img_trim = frame[y:y+ h, x:x+w]
-            cv2.imwrite('SSong.jpg', img_trim)
+        for (faceX, faceY, face_width, face_height) in faces:
+            for(upperX, upperY, upper_width, upper_height) in uppers:
+
+                if(upperX < faceX and upperX + upper_width > faceX + face_width and
+                            upperY < faceY and upperY + upper_height > faceY + face_height):
+                    cv2.rectangle(frame, (faceX, faceY), (faceX + face_width, faceY + face_height),
+                                  (255, 0, 0), 3, 4, 0)
+                    cv2.rectangle(frame, (upperX, upperY), (upperX + upper_width, upperY + upper_height),
+                                  (255, 0, 0), 3, 4, 0)
+
+                    cv2.putText(frame, 'Detected Face', (faceX - 5, faceY - 5), font, 0.9, (255, 255, 0), 2)
+                    img_trim = frame[upperY:upperY+ upper_height, upperX:upperX+upper_width]
+                    cv2.imwrite('SSong.jpg', img_trim)
+
         # 얼굴을 인식하는 사각형에 대한 소스, 텍스트 소스
 
         cv2.imshow('frame', frame)
