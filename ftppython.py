@@ -11,17 +11,17 @@ def ftpTest():
     ftp.login(ID, PASSWORD)
 
     #ftp file location
-    mainlocation = "./Image"
+    mainlocation = "/Image"
     ftp.cwd(mainlocation)
 
     #local file location
     fname = "./Image/test.cgi"
     #os.chdir(r + fname)
-    myfile = open(fname, 'r')
+    myfile = open(fname, 'rb')
 
-    create_file = '/target.cgi'
-    fileToStore = mainlocation + create_file
-    ftp.storlines('STOR ' + fileToStore, myfile)
+    #targetfile to create on ftp
+    create_file = 'target.cgi'
+    ftp.storlines('STOR ' + create_file, myfile)
 
     ftp.quit()
     myfile.close()
