@@ -11,7 +11,7 @@ def ftpTest():
     ftp.login(ID, PASSWORD)
 
     #ftp file location
-    mainlocation = "/Image"
+    mainlocation = "/site/wwwroot"
     ftp.cwd(mainlocation)
 
     #local file location
