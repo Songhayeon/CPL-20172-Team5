@@ -1,5 +1,4 @@
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<CTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
@@ -9,31 +8,48 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script type="text/javascript">
 $(function(){
-//id가 append인 버튼을 click하면
-$("#append").click(function(e){
-//div id가 content태그에 insertImg(이미지추가시키는 함수)가 호출됨
-$("div#content").append(insertImg());
-});
-function insertImg()
-{
-//Math.random() * 3 으로 0~3까지의 실수를 구한다.
-//Math.ceil로 정수형으로 만든다.
-var n = Math.ceil(Math.random() * 3);
-var path = "<img src='http://blogimgs.naver.net/nblog/skins/weather/weather_15_"+n+".png'><br>";
+	//id가 append인 버튼을 click하면
+	$("#append").click(function(e){
+	//div id가 content태그에 insertImg(이미지추가시키는 함수)가 호출됨
+		$("div#content").append(insertImg());
+	});
 
-return path;
-}
+	function insertImg()
+	{
+		//Math.random() * 3 으로 0~3까지의 실수를 구한다.
+		//Math.ceil로 정수형으로 만든다.
+		var n = Math.ceil(Math.random() * 3);
+		var path = "<img src='http://blogimgs.naver.net/nblog/skins/weather/weather_15_"+n+".png'><br>";
+
+		return path;
+	}
+	$("#add").click(function(e){
+		insertText();
+	});
+
+	function insertText(){
+		alert("test");
+		var testString="<p>test text</p>";
+		$("div#text").append(testString);
+	}
 });
 </script>
 </head>
 <body>
     <h1 align="center">Not forgotten</h1>
         <div>
-         <button id="append">ADD PIC</button>
-        </div>
-    <div id="content">
-            <input type="text" id="personName">
-            <button id="personName">add person</button><br>
-    </div>
+        	<button id="append">ADD PIC</button>
+	</div>
+	<div id="content">
+		<select id="personName">
+			<option value="Test1">Test1</option>
+			<option value="Test2">Test2</option>
+		</select>
+        	<button id="personName">add person</button><br>
+    	<div id="text">
+		</div>
+		<button id="add">Add</button>
+	</div>
 </body>
 </html>
+
