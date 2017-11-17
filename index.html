@@ -1,0 +1,96 @@
+<CTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<title>Not forgotten</title>
+
+<!-- <script type="text/javascript" src="jquery-1.8.2.js"></script> -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript">
+$(function(){
+
+
+	//id가 append인 버튼을 click하면 -> 실종자 인식되면 이 함수가 호출되게 바꾸면됨
+
+	$("#append").click(function(e){
+	//div id가 content태그에 insertImg(이미지추가시키는 함수)가 호출됨
+		$("div#content").append(insertImg());
+	});
+
+	function insertImg()
+	{
+		//Math.random() * 4 으로 0~4까지의 실수를 구한다.
+		//Math.ceil로 정수형으로 만든다.
+		var n = Math.ceil(Math.random() * 4);
+		var path = "<img src='C:/Users/suyoung/Documents/test"+n+".jpg' width=200px, height=200px><br>";
+		insertText();
+		return path;
+	}
+
+
+	function insertText(){
+		
+		var testString="<p>이사람을 찾았어요~~~</p>";
+		$("div#content").append(testString);
+	}
+});
+
+	//첨부파일 추가
+    var rowIndex = 1;
+               
+    function addFile(form){
+        if(rowIndex > 4) return false;
+
+        rowIndex++;
+        var getTable = document.getElementById("insertTable");
+	var oCurrentRow = getTable.insertRow(getTable.rows.length);
+        var oCurrentCell = oCurrentRow.insertCell(0);
+        oCurrentCell.innerHTML = "<tr><td colspan=2><INPUT TYPE='FILE' NAME='filename" + rowIndex + "' size=25></td></tr>";
+
+    }
+   
+	//첨부파일 삭제
+    function deleteFile(form){
+        if(rowIndex<2){
+            return false;
+        }else{
+        	rowIndex--;
+			var getTable = document.getElementById("insertTable");
+			getTable.deleteRow(rowIndex);
+       }
+    }
+
+
+</script>
+</head>
+<body>
+    <h1 align="center">Not forgotten</h1>
+        <div align="center">
+        	<button id="append">사진&텍스트 추가버튼</button>
+	</div><br>
+
+<form name="write" align="center">
+	<h5 align="center">실종자 이름 및 파일을 입력하세요</h5>
+	<input type="text" name="personName">
+
+     <table id='insertTable' border=0 cellpadding=0 cellspacing=0 align="center">
+        <tr>
+        	<td valign=bottom>
+        		<INPUT type='file' maxLength='100' name='filename1' size='25'>
+        	</td>
+        	<td width=100>
+        		<input type="button" value="추가" onClick="addFile(this.form)" border=0 style='cursor:hand'>
+        		<input type="button" value="삭제" onClick='deleteFile(this.form)' border=0 style='cursor:hand'>
+        	</td>
+        </tr>
+    </table>
+    <input type="hidden" name="rowCount" value="1">
+    <input type="submit" value="add person = 내용보내는함수 만들어야함">
+</form>
+
+	<div id="content" align="center">
+		
+	</div>
+
+</body>
+</html>
