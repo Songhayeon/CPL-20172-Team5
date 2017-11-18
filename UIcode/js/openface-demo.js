@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Carnegie Mellon University
+Ca:opyright 2015-2016 Carnegie Mellon University
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -77,15 +77,23 @@ function sendFrameLoop() {
     }
     setTimeout(function() {requestAnimFrame(sendFrameLoop)}, 250);
 }
-function toPython()
+function train()
 {
+	alert("train");
 	var msg = {
-            'type': 'TO_PYTHON',
-            'val': '1000'
-        };
-        socket.send(JSON.stringify(msg));
+		'type' : 'TRAIN'
+	}
+	socket.send(JSON.stringify(msg));	
+	alert("send train");
 }
-
+function compare(){
+	alert("COMPARE");
+	var msg = {
+		'type' : 'COMPARE'
+	}
+	socket.send(JSON.stringify(msg));
+	alert("send compare")
+}
 function getPeopleInfoHtml() {
     var info = {'-1': 0};
     var len = people.length;
@@ -188,10 +196,17 @@ function createSocket(address, name) {
                 socket.send(JSON.stringify({'type': 'NULL'}));
                 sentTimes.push(new Date());
             }
-        }else if(j.type == "FROMPYTHON"){
-		alert(j['data'])
-		document.getElementById("fromPython").innerHTML = j['data'];
-	} 
+        }else if(j.type == "TRAIN_RETURN"){
+		alert("TRAIN_RETURN");
+	}
+	else if(j.type == "COMPARE_RETURN"){
+		var _name = j.name;
+		var _confidence = j.confidence;
+		var _path =  j.path;
+		alert(_name);
+		alert(_confidence);
+		alert(_path);
+	}
 	else if (j.type == "PROCESSED") {
             tok++;
         } else if (j.type == "NEW_IMAGE") {

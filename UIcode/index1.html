@@ -25,34 +25,47 @@ limitations under the License.
         <link href="vendor/css/bootstrap-toggle.min.css" rel="stylesheet">
         <link href="vendor/css/bootstrap-dialog.min.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
-    	<style>
-		body{
-			background-color:#777777;
-			color:#FFF;
-		}
-
-	</style>
     </head>
     <body>
+        <div class="container">
+            <div class="header">
+                <ul class='tabs'>
+                    <li class='tab-link' data-tab='tab-preview'
+                        id='tab-preview-button'>
+                        Preview
+                    </li>
+                    <li class='tab-link current' data-tab='tab-annotated'
+                        id='tab-annotated-button'>
+                        Annotated
+                    </li>
+                </ul>
+                <div id='tab-preview' class='tab-content'>
+                    <video id="videoel" width="400" height="300"
+                           preload="auto" loop></video>
+                </div>
+                <div id='tab-annotated' class='tab-content current'>
+                    <div id="detectedFaces"></div>
+                </div>
+            </div>
             <div class="content">
+                <h2>People in Video</h2>
+                <div id="peopleInVideo"></div>
 
-		    <h1>Servers: <span id="serverStatus"></span></h1>
+                <h2>Servers: <span id="serverStatus"></span></h2>
                 <!-- <div id="serverStatus"></div> -->
                 <div class="btn-group" role="group" id="serverBtn">
                 </div>
 
                 <div class="input-group addPersonDiv">
+                    <input type="text" class="form-control" id="addPersonTxt">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button"
-				id="TRAIN">
-                            TRAIN
+                                id="addPersonBtn">
+                            Add Person
                         </button>
-		    <br>
-		    <button class="btn btn-default" type="button" id="COMPARE">
-		   COMPARE </button>
-		</span>
+                    </span>
                 </div>
-		<br/>
+                <br/>
 		 <div class="dropdown" id="defaultPersonDropdown"></div>
                 <script id="defaultPersonTmpl" type="text/x-handlebars-template">
                     <button class="btn btn-default dropdown-toggle"
@@ -130,6 +143,7 @@ limitations under the License.
                     </tbody>
                 </script>
             </div>
+        </div>
     </body>
     <script src="vendor/js/jquery.min.js"></script>
     <script src="vendor/js/bootstrap.min.js"></script>
@@ -181,9 +195,8 @@ limitations under the License.
      $("#serverBtn.btn-group > .btn").click(changeServerCallback);
      $("#addPersonBtn").click(addPersonCallback);
      $("#addPersonTxt").pressEnter(addPersonCallback);
-     $("#TRAIN").click(train);
-     $("#COMPARE").click(compare);
 
+     redrawPeople();
      // createSocket("wss://facerec.cmusatyalab.org:9000", "CMU");
      createSocket("wss://" + window.location.hostname + ":9000", "Local");
     </script>

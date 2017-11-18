@@ -13,9 +13,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import os
 import sys
+sys.path.insert(0,"/home/ubuntu/OpenFace/NFG/")
+import NFG
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, "..", ".."))
 
@@ -39,12 +40,13 @@ import os
 import StringIO
 import urllib
 import base64
-
+import signal
 from sklearn.decomposition import PCA
 from sklearn.grid_search import GridSearchCV
 from sklearn.manifold import TSNE
 from sklearn.svm import SVC
-
+import webcam
+import threading
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
@@ -77,8 +79,50 @@ args = parser.parse_args()
 align = openface.AlignDlib(args.dlibFacePredictor)
 net = openface.TorchNeuralNet(args.networkModel, imgDim=args.imgDim,
                               cuda=args.cuda)
+font = cv2.FONT_HERSHEY_SIMPLEX
+def signal_handler(signal, frame):
+        print('You pressed Ctrl+C!')
+        sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
+"""
+def faceDetect(parent):
+    cnt = 0
+    
+    face_cascade = cv2.CascadeClassifier('/home/ubuntu/OpenFace/openface/demos/web/haarcascade_frontalface_default.xml')
+    upper_cascade = cv2.CascadeClassifier('/home/ubuntu/OpenFace/openface/demos/web/haarcascade_upperbody.xml')
+    try:
+        cap = cv2.VideoCapture(2)
+        print('Success')
 
+    except:
+        print('Failure')
+        return
 
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            return
+
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray, 1.3, 2, 0, (30, 30))
+        uppers = upper_cascade.detectMultiScale(gray, 1.3, 2, 0, (30,30))
+        for (faceX, faceY, face_width, face_height) in faces:
+            for(upperX, upperY, upper_width, upper_height) in uppers:
+                if(upperX < faceX and upperX + upper_width > faceX + face_width and
+                            upperY < faceY and upperY + upper_height > faceY + face_height):
+                    img_trim = frame[upperY:upperY+ upper_height, upperX:upperX+upper_width]
+                    cv2.imwrite('/home/ubuntu/dataset/detect' + str(cnt // 10) + '.png', img_trim)
+                    cnt+=1
+                    
+        if(cnt % 10 == 1):
+            parent.Compare()
+        cv2.imshow('frame', frame)
+        if cv2.waitKey(1) == 255:
+            break;
+    
+    cap.release()
+    cv2.destroyAllWindows()
+"""
 class Face:
 
     def __init__(self, rep, identity):
@@ -99,9 +143,10 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.training = True
         self.people = []
         self.svm = None
+     #   self.t = threading.Thread(target=faceDetect, args=(self,))
+     #   self.t.start()
         if args.unknown:
             self.unknownImgs = np.load("./examples/web/unknown.npy")
-
     def onConnect(self, request):
         print("Client connecting: {0}".format(request.peer))
         self.training = True
@@ -127,12 +172,16 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                 self.trainSVM()
         elif msg['type'] == "ADD_PERSON":
             self.people.append(msg['val'].encode('ascii', 'ignore'))
-            print(self.people)
-        elif msg['type'] == "TO_PYTHON":
-            print( msg['val'])
+            print(self.people);
+        elif msg['type'] == 'COMPARE':
+            print("COMPARE START")
+            self.Compare();
+        elif msg['type'] == "TRAIN":
+            print("TRAIN START")
+            NFG.Train()
             msg = {
-                    "type" : "FROMPYTHON",
-                    "data" : "1000000"};
+                    "type" : "TRAIN_RETURN"
+                    };
             self.sendMessage(json.dumps(msg))
         elif msg['type'] == "UPDATE_IDENTITY":
             h = msg['hash'].encode('ascii', 'ignore')
@@ -154,7 +203,15 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             self.sendTSNE(msg['people'])
         else:
             print("Warning: Unknown message type: {}".format(msg['type']))
-
+    def Compare(self):
+        name, confidence, path = NFG.Compare()
+        msg = {
+                "type" : "COMPARE_RETURN",
+                "name" : name,
+                "confidence" : confidence,
+                "path" : path
+                }
+        self.sendMessage(json.dumps(msg))
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
 
