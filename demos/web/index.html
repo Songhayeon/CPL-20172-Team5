@@ -1,0 +1,51 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Test Server</title>
+    </head>
+    <body>
+            <div class="content">
+                <div class="btn-group" role="group" id="serverBtn">
+                </div>
+
+                <div class="input-group addPersonDiv">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button"
+				id="TRAIN">
+                        TRAIN    
+                        </button>
+		    <br>
+		    <button class="btn btn-default" type="button" id="COMPARE">
+			   COMPARE </button>
+		    <button class="btn btn-default" type="button" id="TEST">
+			TEST</button>
+		</span>
+                </div>
+            </div>
+    </body>
+    <script src="vendor/js/jquery.min.js"></script>
+    <script src="vendor/js/bootstrap.min.js"></script>
+    <script src="vendor/js/bootstrap-toggle.min.js"></script>
+    <script src="vendor/js/bootstrap-dialog.min.js"></script>
+    <script src="vendor/js/handlebars.min.js"></script>
+    <script src="vendor/js/jstat.min.js"></script>
+    <script src="vendor/js/utils.js"></script>
+    <script src="js/openface-demo.js"></script>
+    <script type="text/javascript">
+     registerHbarsHelpers();
+
+     var numNulls, sentTimes, receivedTimes;
+     var socket, socketName;
+     var moviesocket, moviesocketName;
+     $("#TRAIN").click(train);
+     $("#COMPARE").click(compare);
+     $("#TEST").click(test);
+     // createSocket("wss://facerec.cmusatyalab.org:9000", "CMU");
+     createSocket("wss://" + window.location.hostname + ":9000", "Local");
+	alert("AAA");
+     createMovieSocket("wss://" + window.location.hostname + ":9898", "Local");
+	alert("AAA");
+    </script>
+</html>
