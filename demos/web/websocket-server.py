@@ -29,7 +29,7 @@ import signal
 import threading
 import base64
 import openface
-
+import time
 tls_crt = os.path.join(fileDir, 'tls', 'server.crt')
 tls_key = os.path.join(fileDir, 'tls', 'server.key')
 
@@ -38,31 +38,33 @@ parser.add_argument('--port', type=int, default=9000,
                     help='WebSocket Port')
 
 args = parser.parse_args()
-"""
 def signal_handler(signal, frame):
     print('You pressed Ctrl+C!')
-    sys.exit(0)
+    main_thread = threading.currentThread()
+    for t in threading.enumerate():
+        t.join()
 signal.signal(signal.SIGINT, signal_handler)
 def faceDetect(parent):
-	try:
-		capture = cv2.VideoCapture(0)
-		print('Success')
-	except:
-		print('Failure')
-		return
-	#while True:
-	ret, frame = capture.read()
-	ret, temp = cv2.imencode('.png', frame)
-	data = base64.encodestring(temp)
-	length = len(data)
-	message = {
-		'type' : 'VIDEO',
-		'length' : length,
-		'data' : data
-	}
-	parent.sendMessage(json.dumps(message))
-	print(length, data)
-"""
+    try:
+        capture = cv2.VideoCapture(1)
+	print('====Success')
+    except:
+    	print('Failure')
+	return
+    while True:
+        ret, frame = capture.read()
+        #img_gray = cv2.cvtColor(frame, 0)
+        #time.sleep(1)
+        ret, temp = cv2.imencode('.jpeg', frame)
+        data = base64.b64encode(temp)
+        length = len(data)
+        message = {
+	    'type' : 'VIDEO',
+	    'length' : length,
+	    'data' : data
+        }
+        parent.sendMessage(json.dumps(message))
+
 class OpenFaceServerProtocol(WebSocketServerProtocol):
     def __init__(self):
         super(OpenFaceServerProtocol, self).__init__()
@@ -70,15 +72,15 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
         self.training = True
         self.people = []
         self.svm = None
-#        self.t = threading.Thread(target=faceDetect, args=(self,))
-#        self.t.start()
+        self.t = None
     def onConnect(self, request):
         print("Client connecting: {0}".format(request.peer))
         self.training = True
 
     def onOpen(self):
         print("WebSocket connection open.")
-
+        self.t = threading.Thread(target=faceDetect, args=(self,))
+        self.t.start()
     def onMessage(self, payload, isBinary):
         raw = payload.decode('utf8')
         msg = json.loads(raw)
