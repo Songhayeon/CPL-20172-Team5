@@ -21,6 +21,8 @@
 			   COMPARE </button>
 		    <button class="btn btn-default" type="button" id="TEST">
 			TEST</button>
+			<br>
+			<img id="video" src="compare.jpg">
 		</span>
                 </div>
             </div>
@@ -44,8 +46,6 @@
      $("#TEST").click(test);
      // createSocket("wss://facerec.cmusatyalab.org:9000", "CMU");
      createSocket("wss://" + window.location.hostname + ":9000", "Local");
-	alert("AAA");
-     createMovieSocket("wss://" + window.location.hostname + ":9898", "Local");
-	alert("AAA");
+	 createMovieSocket("wss://" + window.location.hostname + ":9898", "Local");
     </script>
 </html>

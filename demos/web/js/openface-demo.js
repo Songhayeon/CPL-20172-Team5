@@ -96,7 +96,6 @@ function sendState() {
     };
     socket.send(JSON.stringify(msg));
 }
-
 function createMovieSocket(address, name) {
     moviesocket = new WebSocket(address);
     moviesocketName = name;
@@ -143,6 +142,7 @@ function createMovieSocket(address, name) {
     }
 }
 
+
 function createSocket(address, name) {
     socket = new WebSocket(address);
     socketName = name;
@@ -171,17 +171,24 @@ function createSocket(address, name) {
                 socket.send(JSON.stringify({'type': 'NULL'}));
                 sentTimes.push(new Date());
             }
-        }else if(j.type == "TRAIN_RETURN"){
-		alert("TRAIN_RETURN");
-	}
-	else if(j.type == "COMPARE_RETURN"){
-		var _name = j.name;
-		var _confidence = j.confidence;
-		var _path =  j.path;
-		alert(_name);
-		alert(_confidence);
-		alert(_path);
-	}
+        }
+		else if(j.type == "TRAIN_RETURN"){
+			alert("TRAIN_RETURN");
+		}
+		else if(j.type == "COMPARE_RETURN"){
+			var _name = j.name;
+			var _confidence = j.confidence;
+			var _path =  j.path;
+			alert(_name);
+			alert(_confidence);
+			alert(_path);
+		}
+		else if(j.type == "VIDEO"){
+			alert(j.length);
+			var temp = 'data:image/png;base64,' + j.data;
+			alert(temp);
+			document.getElementById('video').src = temp;
+		}
         else {
             console.log("Unrecognized message type: " + j.type);
         }
