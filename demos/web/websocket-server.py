@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0,"/home/ubuntu/OpenFace/openface/NFG")
 import NFG
 sys.path.insert(0,"/home/ubuntu/OpenFace/openface/VideoCrop")
-import VideoCrop
+import VideoCrop as vc
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, "..", ".."))
 
@@ -103,7 +103,7 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             self.sendMessage(json.dumps(msg))
         elif msg['type'] == "VIDEOCROP":
             print("START THE CROP THE VIDEO")
-            self.VideoCrop()
+            vc.VideoCrop()
         else:
             print("Warning: Unknown message type: {}".format(msg['type']))
     def Compare(self):
@@ -115,8 +115,6 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                 "path" : path
                 }
         self.sendMessage(json.dumps(msg))
-    def VideoCrop(self):
-        VideoCrop.VideoCrop()
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
 
