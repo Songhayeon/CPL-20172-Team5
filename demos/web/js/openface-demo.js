@@ -51,12 +51,13 @@ function sendFrameLoop() {
 }
 function test()
 {
-	alert("COMPARE");
+	alert("TEST");
 	var msg = {
-		'type' : 'COMPARE'
+		'type' : 'VIDEOCROP'
 	}
 	socket.send(JSON.stringify(msg));
-	alert("send compare")
+	alert("send video");
+	
 }
 function train()
 {
@@ -95,6 +96,16 @@ function sendState() {
     };
     socket.send(JSON.stringify(msg));
 }
+function insert_person(path, name) {
+                // img source
+	var img_source = '"' + path + '"';
+	var img = "<img src=" + img_source + " width= 50%, height = 50%>";
+
+	var person_name = "<h5>" + name + "</h5>";
+	var return_str = "<td><div align=\"center\">" + person_name + img + "</div></td>";
+	alert(return_str);
+	return return_str;
+}
 function createSocket(address, name) {
     socket = new WebSocket(address);
     socketName = name;
@@ -132,8 +143,7 @@ function createSocket(address, name) {
 		var _confidence = j.confidence;
 		var _path =  j.path;
 		alert(_name);
-		alert(_confidence);
-		alert(_path);
+		$("table#content").append(insert_person(_path, _name));
 	}
 	else if(j.type == "VIDEO"){
 		var temp = 'data:image/png;base64,' + j.data;

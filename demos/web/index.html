@@ -226,6 +226,7 @@
                                 <h4>Detected person below</h4>
                                 <button id="append">Test button( add image & text)</button>
                                 <table border="0px" padding="0px" id="content" align="center">
+					<img src="/home/ubuntu/dataset/compare.jpg" width=50% height=50%>
                                 </table>
                             </div>
 
@@ -248,8 +249,6 @@
         registerHbarsHelpers();
         var numNulls, sentTimes, receivedTimes;
         var socket, socketName;
-	//$("#VIDEOCROP").click(videocrop);
-        // createSocket("wss://facerec.cmusatyalab.org:9000", "CMU");
         createSocket("wss://" + window.location.hostname + ":9000", "Local");
 	$("#TRAIN").click(test);
 	$("#COMPARE").click(compare);
@@ -269,14 +268,14 @@
                 $("table#content").append(insert_detected_person());
             });
 
-            function insert_detected_person() {
+            function insert_detected_person(path, name) {
                 // img source
-                var img_source = "'./test.jpg'";
+                var img_source = path;
                 var img = "<img src=" + img_source + " width= 50%, height = 50%>";
 
-                var person_name = "<h5>insert text in here</h5>";
+		var person_name = "<h5>" + name + "</h5>";
                 var return_str = "<td><div align=\"center\">" + person_name + img + "</div></td>";
-
+		alert(return_str);
                 return return_str;
             }
         });
