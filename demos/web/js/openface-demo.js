@@ -32,7 +32,6 @@ $.fn.pressEnter = function(fn) {
         })
     });
  };
-
 function registerHbarsHelpers() {
     // http://stackoverflow.com/questions/8853396
     Handlebars.registerHelper('ifEq', function(v1, v2, options) {
@@ -52,12 +51,12 @@ function sendFrameLoop() {
 }
 function test()
 {
-	alert("test");
+	alert("COMPARE");
 	var msg = {
-		'type' : 'TEST'
+		'type' : 'COMPARE'
 	}
-	moviesocket.send(JSON.stringify(msg));
-	alert("test success");
+	socket.send(JSON.stringify(msg));
+	alert("send compare")
 }
 function train()
 {
@@ -96,53 +95,6 @@ function sendState() {
     };
     socket.send(JSON.stringify(msg));
 }
-function createMovieSocket(address, name) {
-    moviesocket = new WebSocket(address);
-    moviesocketName = name;
-    moviesocket.binaryType = "arraybuffer";
-    moviesocket.onopen = function() {
-        $("#serverStatus").html("Connected to " + name);
-        sentTimes = [];
-        receivedTimes = [];
-        tok = defaultTok;
-        numNulls = 0
-
-        socket.send(JSON.stringify({'type': 'NULL'}));
-        sentTimes.push(new Date());
-    }
-    moviesocket.onmessage = function(e) {
-        console.log(e);
-        j = JSON.parse(e.data)
-        if (j.type == "NULL") {
-            receivedTimes.push(new Date());
-            numNulls++;
-            if (numNulls == defaultNumNulls) {
-                updateRTT();
-                sendState();
-                sendFrameLoop();
-            } else {
-                moviesocket.send(JSON.stringify({'type': 'NULL'}));
-                sentTimes.push(new Date());
-            }
-        }else if(j.type == "TRAIN_RETURN"){
-                alert("TRAIN_RETURN");
-        }
-        else {
-            console.log("Unrecognized message type: " + j.type);
-        }
-    }
-    moviesocket.onerror = function(e) {
-        console.log("Error creating WebSocket connection to " + address);
-        console.log(e);
-    }
-    moviesocket.onclose = function(e) {
-        if (e.target == moviesocket) {
-            $("#serverStatus").html("Disconnected.");
-        }
-    }
-}
-
-
 function createSocket(address, name) {
     socket = new WebSocket(address);
     socketName = name;
@@ -172,23 +124,21 @@ function createSocket(address, name) {
                 sentTimes.push(new Date());
             }
         }
-		else if(j.type == "TRAIN_RETURN"){
-			alert("TRAIN_RETURN");
-		}
-		else if(j.type == "COMPARE_RETURN"){
-			var _name = j.name;
-			var _confidence = j.confidence;
-			var _path =  j.path;
-			alert(_name);
-			alert(_confidence);
-			alert(_path);
-		}
-		else if(j.type == "VIDEO"){
-			alert(j.length);
-			var temp = 'data:image/png;base64,' + j.data;
-			alert(temp);
-			document.getElementById('video').src = temp;
-		}
+	else if(j.type == "TRAIN_RETURN"){
+		alert("TRAIN_RETURN");
+	}
+	else if(j.type == "COMPARE_RETURN"){
+		var _name = j.name;
+		var _confidence = j.confidence;
+		var _path =  j.path;
+		alert(_name);
+		alert(_confidence);
+		alert(_path);
+	}
+	else if(j.type == "VIDEO"){
+		var temp = 'data:image/png;base64,' + j.data;
+		document.getElementById('video').src = temp;
+	}
         else {
             console.log("Unrecognized message type: " + j.type);
         }

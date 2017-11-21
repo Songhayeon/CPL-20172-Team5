@@ -3,6 +3,8 @@ import os
 import sys
 sys.path.insert(0,"/home/ubuntu/OpenFace/openface/NFG")
 import NFG
+sys.path.insert(0,"/home/ubuntu/OpenFace/openface/VideoCrop")
+import VideoCrop
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, "..", ".."))
 
@@ -43,7 +45,7 @@ def signal_handler(signal, frame):
     main_thread = threading.currentThread()
     for t in threading.enumerate():
         t.join()
-signal.signal(signal.SIGINT, signal_handler)
+#signal.signal(signal.SIGINT, signal_handler)
 def faceDetect(parent):
     try:
         capture = cv2.VideoCapture(1)
@@ -64,6 +66,7 @@ def faceDetect(parent):
 	    'data' : data
         }
         parent.sendMessage(json.dumps(message))
+        cv2.waitKey(25)
 
 class OpenFaceServerProtocol(WebSocketServerProtocol):
     def __init__(self):
@@ -79,8 +82,8 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
 
     def onOpen(self):
         print("WebSocket connection open.")
-        self.t = threading.Thread(target=faceDetect, args=(self,))
-        self.t.start()
+        #self.t = threading.Thread(target=faceDetect, args=(self,))
+        #self.t.start()
     def onMessage(self, payload, isBinary):
         raw = payload.decode('utf8')
         msg = json.loads(raw)
@@ -98,6 +101,9 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                     "type" : "TRAIN_RETURN"
                     };
             self.sendMessage(json.dumps(msg))
+        elif msg['type'] == "VIDEOCROP":
+            print("START THE CROP THE VIDEO")
+            self.VideoCrop()
         else:
             print("Warning: Unknown message type: {}".format(msg['type']))
     def Compare(self):
@@ -109,6 +115,8 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
                 "path" : path
                 }
         self.sendMessage(json.dumps(msg))
+    def VideoCrop(self):
+        VideoCrop.VideoCrop()
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
 
