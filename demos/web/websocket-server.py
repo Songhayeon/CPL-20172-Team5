@@ -40,19 +40,21 @@ parser.add_argument('--port', type=int, default=9000,
                     help='WebSocket Port')
 
 args = parser.parse_args()
+global crop
+crop = threading.Thread
+try:
+    capture = cv2.VideoCapture(1)
+    print('==========Video Access Complete========')
+except:
+    print('Failure')
+    exit(1)
+
 def signal_handler(signal, frame):
     print('You pressed Ctrl+C!')
-    main_thread = threading.currentThread()
-    for t in threading.enumerate():
-        t.join()
-#signal.signal(signal.SIGINT, signal_handler)
+    capture.release()
+    crop.join()
+signal.signal(signal.SIGINT, signal_handler)
 def faceDetect(parent):
-    try:
-        capture = cv2.VideoCapture(1)
-	print('====Success')
-    except:
-    	print('Failure')
-	return
     while True:
         ret, frame = capture.read()
         #img_gray = cv2.cvtColor(frame, 0)
@@ -82,8 +84,9 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
 
     def onOpen(self):
         print("WebSocket connection open.")
-        #self.t = threading.Thread(target=faceDetect, args=(self,))
-        #self.t.start()
+        self.t = threading.Thread(target=faceDetect, args=(self,))
+        self.t.start()
+        #self.t.daemon = True
     def onMessage(self, payload, isBinary):
         raw = payload.decode('utf8')
         msg = json.loads(raw)
@@ -103,7 +106,9 @@ class OpenFaceServerProtocol(WebSocketServerProtocol):
             self.sendMessage(json.dumps(msg))
         elif msg['type'] == "VIDEOCROP":
             print("START THE CROP THE VIDEO")
-            vc.VideoCrop()
+            crop = threading.Thread(target=vc.VideoCrop)
+            crop.daemon = True
+            crop.start()
         else:
             print("Warning: Unknown message type: {}".format(msg['type']))
     def Compare(self):

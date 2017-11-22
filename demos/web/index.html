@@ -221,12 +221,11 @@
                                     <input type="reset" value="Reset">
                                 </form>
                             </div>
-
                             <div id="monitor_section" class="tabcontent">
                                 <h4>Detected person below</h4>
                                 <button id="append">Test button( add image & text)</button>
                                 <table border="0px" padding="0px" id="content" align="center">
-					<img src="/home/ubuntu/dataset/compare.jpg" width=50% height=50%>
+					<img src="<%=request.getContextPath() %>/home/ubuntu/dataset/compare.jpg" width=50% height=50%/>
                                 </table>
                             </div>
 
@@ -250,10 +249,10 @@
         var numNulls, sentTimes, receivedTimes;
         var socket, socketName;
         createSocket("wss://" + window.location.hostname + ":9000", "Local");
-	$("#TRAIN").click(test);
+	$("#TRAIN").click(train);
 	$("#COMPARE").click(compare);
         //function open_section(cityName, elmnt, color)
-        function open_section(sectionName) {
+        function open_section(sectionName) {	
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tabcontent");
             for (i = 0; i < tabcontent.length; i++) {
